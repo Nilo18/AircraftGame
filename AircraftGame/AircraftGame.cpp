@@ -8,7 +8,7 @@ bool gameIsRunning = true;
 int score = 0;
 void endGame();
 void deleteMissile();
-void deleteObstacle();
+void deleteObstacle(int index);
 void gameLoop();
 inline void setCursorPosition(int x, int y);
 
@@ -80,18 +80,47 @@ void displayFrame(int x, int y, vector<vector<int>> objectToDisplay, int gamespe
     for (int i = 0; i < objectToDisplay.size(); i++) {
         setCursorPosition(x, y + i);
         for (int j = 0; j < objectToDisplay[i].size(); j++) {
-            switch (objectToDisplay[i][j]) {
-            case 11: cout << '*'; break;
-            case 10: cout << '/'; break;
-            case 110: cout << '\\'; break;
-            case 0: cout << ' '; break;
-            case 111: cout << '#'; break;
-            default: cout << '|'; break;
+            int cell = objectToDisplay[i][j];
+
+            if (cell == 0) {
+                cout << ' ';
+                continue;
             }
+
+            // Set red color if this is the top-point '*' (represented by 11)
+            if (cell == 11 && i == 0) {
+                SetConsoleTextAttribute(getConsole(), FOREGROUND_RED | FOREGROUND_INTENSITY);
+                cout << '*';
+            }
+            else if (cell == 11 && i == 2) {
+                SetConsoleTextAttribute(getConsole(), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+                cout << '*';
+            }
+            else {
+                switch (cell) {
+                case 10: cout << '/'; break;
+                case 110: cout << '\\'; break;
+                case 111:
+                    SetConsoleTextAttribute(
+                        getConsole(),
+                        FOREGROUND_GREEN | FOREGROUND_INTENSITY |
+                        BACKGROUND_GREEN | BACKGROUND_INTENSITY
+                    );
+                    cout << ' '; 
+                    break;
+
+                default: cout << '|'; break;
+                }
+            }
+
+            // Reset color back to white (default)
+            SetConsoleTextAttribute(getConsole(), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
         }
     }
-    //Sleep(gamespeed);
+
+    // Sleep(gamespeed); // Optional for animation delay
 }
+
 
 class Obstacle {
 private:
@@ -128,7 +157,6 @@ void Obstacle::moveDown() {
     clearFrame(startX, startY, rows, cols); // Pass the size of the obstacle as well as the coordinates DONE!
     if (startY < bottomLimit) startY++;
     displayFrame(startX, startY, obstacleRep);
-    //Sleep(20);
 }
 
 vector<Obstacle*> activeObstacles; // Vector for counting active obstacles
@@ -166,7 +194,8 @@ bool checkForMissileCollisions(const Missile& m) {
             int screenX = m.startX + j;
             int screenY = m.startY + i;
 
-            for (Obstacle* ob : activeObstacles) {
+            for (int obIndex = 0; obIndex < activeObstacles.size(); obIndex++) {
+                Obstacle* ob = activeObstacles[obIndex];
                 int obX = ob->getX();
                 int obY = ob->getY();
 
@@ -176,7 +205,7 @@ bool checkForMissileCollisions(const Missile& m) {
                         int obstacleY = obY + oi;
 
                         if (obstacleY == screenY + 1 && obstacleX == screenX) {
-                            deleteObstacle(); // Delete the obstacle if it has collided with the missile
+                            deleteObstacle(obIndex); // Delete the obstacle if it has collided with the missile
                             showCurrentScore(100); // Update the score by 100
                             return true;
                         }
@@ -196,7 +225,7 @@ void Missile::moveUpward() {
         startY--;
         displayFrame(startX, startY, missileRep);
     }
-    Sleep(20);
+    Sleep(10);
 }
 
 vector<Missile*> activeMissiles; // Vector for counting active missiles
@@ -338,27 +367,32 @@ void listenForEvents(Aircraft& a) {
 }
 
 void makeObstacles() {
-    if (activeObstacles.size() <= 3) activeObstacles.push_back(new Obstacle); // Make sure that obstacles are limited in quantity
+    if (activeObstacles.size() < 3) activeObstacles.push_back(new Obstacle); // Make sure that obstacles are limited in quantity
 }
 
-void deleteObstacle() {
-    for (int i = 0; i < activeObstacles.size(); i++) {
-        clearFrame(activeObstacles[i]->getX(), activeObstacles[i]->getY(), activeObstacles[i]->getRows(), activeObstacles[i]->getCols());
-        delete activeObstacles[i];
-        activeObstacles.erase(activeObstacles.begin() + i);
-        i--; // Adjust index after deletion
-    }
+void deleteObstacle(int index) {
+    //for (int i = 0; i < activeObstacles.size(); i++) {
+        clearFrame(activeObstacles[index]->getX(), activeObstacles[index]->getY(), activeObstacles[index]->getRows(), activeObstacles[index]->getCols());
+        delete activeObstacles[index];
+        activeObstacles.erase(activeObstacles.begin() + index);
+    //    i--; // Adjust index after deletion
+    //}
 }
 
 void controlObstacles() {
-    for (int i = 0; i < activeObstacles.size(); i++) {
-        activeObstacles[i]->moveDown();  // Move the obstacle
+    static int frameCount = 0; // Make the frame count static so it doesn't reset on every function call
+    frameCount++; // Increase the frame count on every run
 
-        // Delete obstacle if it reaches the bottom
-        if (activeObstacles[i]->getY() == activeObstacles[i]->getBottomLimit()) {
-            deleteObstacle();
+   if (frameCount % 5 == 0) {
+        for (int i = 0; i < activeObstacles.size(); i++) {
+            activeObstacles[i]->moveDown();  // Move the obstacle
+
+            // Delete obstacle if it reaches the bottom
+            if (activeObstacles[i]->getY() == activeObstacles[i]->getBottomLimit()) {
+                deleteObstacle(i);
+            }
         }
-    }
+   }
 }
 
 void deleteMissile() {
