@@ -86,29 +86,19 @@ void displayFrame(int x, int y, vector<vector<int>> objectToDisplay, int gamespe
                 cout << ' ';
                 continue;
             }
-
-            // Set red color if this is the top-point '*' (represented by 11)
-            if (cell == 11 && i == 0) {
-                SetConsoleTextAttribute(getConsole(), FOREGROUND_RED | FOREGROUND_INTENSITY);
-                cout << '*';
-            }
-            else if (cell == 11 && i == 2) {
-                SetConsoleTextAttribute(getConsole(), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-                cout << '*';
-            }
             else {
                 switch (cell) {
                 case 10: cout << '/'; break;
                 case 110: cout << '\\'; break;
                 case 111:
-                    SetConsoleTextAttribute(
-                        getConsole(),
-                        FOREGROUND_GREEN | FOREGROUND_INTENSITY |
-                        BACKGROUND_GREEN | BACKGROUND_INTENSITY
-                    );
-                    cout << ' '; 
-                    break;
-
+                    SetConsoleTextAttribute(getConsole(), FOREGROUND_GREEN | FOREGROUND_INTENSITY | BACKGROUND_GREEN | BACKGROUND_INTENSITY);
+                    cout << '#'; break;
+                case 101:
+                    SetConsoleTextAttribute(getConsole(), FOREGROUND_RED | BACKGROUND_RED);
+                    cout << "o"; break;
+                case 11: 
+                    SetConsoleTextAttribute(getConsole(), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+                    cout << '*'; break;
                 default: cout << '|'; break;
                 }
             }
@@ -221,7 +211,7 @@ void Missile::moveUpward() {
     bool isColliding = checkForMissileCollisions(*this);
 
     if (!isColliding && startY != 1) {
-        clearFrame(startX, startY, rows, cols); //DONE!
+        clearFrame(startX, startY, rows, cols); 
         startY--;
         displayFrame(startX, startY, missileRep);
     }
@@ -234,9 +224,9 @@ vector<Missile*> activeMissiles; // Vector for counting active missiles
 class Aircraft {
 private:
     vector <vector<int>> aircraftRep = {
-        {0, 0, 11, 0, 0},
-        {0, 10, 1, 110, 0},
-        {10, 0, 1, 0, 110},
+        {0, 0, 101, 0, 0},
+        {0, 101, 101, 101, 0},
+        {101, 0, 101, 0, 101},
     };
     int startX = 54; // Starting X coordinate
     int startY = 25; // Starting Y coordinate
@@ -297,8 +287,7 @@ Aircraft::Aircraft() {
     displayFrame(startX, startY, aircraftRep);
 }
 
-// Make sure to take the obstacles in the view as well in the future
-// Because there might be an obstacle to the left or the right and Aircraft could walk over it instead of stopping
+// Check if the aircraft is colliding with an obstacle on the side while it is moving
 void Aircraft::moveLeft() {
     int futureX = startX - 1;
 
