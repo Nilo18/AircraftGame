@@ -12,6 +12,10 @@ void deleteObstacle(int index);
 void gameLoop();
 inline void setCursorPosition(int x, int y);
 
+// *************************
+// Tamashi ro gacherebulia da axalidan dawyebas ro xels ushlis eg gafiqse
+// *************************
+
 // Function for displaying OR updating the score
 inline void showCurrentScore(int add = 0) {
     if (add != 0) score += add; 
@@ -36,7 +40,6 @@ HANDLE getConsole() {
 // Function for getting the right most edge of the console
 int getConsoleRightmostX() {
     CONSOLE_SCREEN_BUFFER_INFO screenBufferInfo;
-    //HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
     // Add some safety
     if (GetConsoleScreenBufferInfo(getConsole(), &screenBufferInfo)) {
@@ -110,7 +113,6 @@ void displayFrame(int x, int y, vector<vector<int>> objectToDisplay, int gamespe
 
     // Sleep(gamespeed); // Optional for animation delay
 }
-
 
 class Obstacle {
 private:
@@ -215,7 +217,6 @@ void Missile::moveUpward() {
         startY--;
         displayFrame(startX, startY, missileRep);
     }
-    Sleep(10);
 }
 
 vector<Missile*> activeMissiles; // Vector for counting active missiles
@@ -360,12 +361,9 @@ void makeObstacles() {
 }
 
 void deleteObstacle(int index) {
-    //for (int i = 0; i < activeObstacles.size(); i++) {
-        clearFrame(activeObstacles[index]->getX(), activeObstacles[index]->getY(), activeObstacles[index]->getRows(), activeObstacles[index]->getCols());
-        delete activeObstacles[index];
-        activeObstacles.erase(activeObstacles.begin() + index);
-    //    i--; // Adjust index after deletion
-    //}
+    clearFrame(activeObstacles[index]->getX(), activeObstacles[index]->getY(), activeObstacles[index]->getRows(), activeObstacles[index]->getCols());
+    delete activeObstacles[index];
+    activeObstacles.erase(activeObstacles.begin() + index);
 }
 
 void controlObstacles() {
@@ -452,6 +450,9 @@ inline void checkForGameOver(Aircraft& a) {
     }
 }
 
+// ****************
+// aq sheaswore ro ramdeni char icaa xazze imdeni empty space dabechdos (ciklit sheamowme)
+// ****************
 void restartTheGame(Aircraft& a) {
     clearFrame(a.getStartX(), a.getStartY(), a.getRows(), a.getCols());
     gameIsRunning = true;
@@ -461,15 +462,15 @@ void restartTheGame(Aircraft& a) {
     cout << "                       ";
     setCursorPosition(48, 14);
     cout << "                             ";
-    setCursorPosition(0, 0);
-    cout << "                   ";
+    setCursorPosition(55, 0);
+    cout << "                    ";
     score = 0;
     gameLoop();
 }
 
 void gameLoop() {
     Aircraft a; // Create the aircaft
-    showCurrentScore();
+    showCurrentScore(); // Show the current score
 
     // The outer loop is for keeping the console running in case the game is over
     while (true) {
