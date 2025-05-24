@@ -7,9 +7,10 @@ using namespace std;
 bool gameIsRunning = true; 
 int score = 0;
 void endGame();
-void deleteMissile();
+void deleteMissile(int index);
 void deleteObstacle(int index);
 void gameLoop();
+void cleanUpDynamicMemories();
 inline void setCursorPosition(int x, int y);
 
 // *************************
@@ -382,26 +383,30 @@ void controlObstacles() {
    }
 }
 
-void deleteMissile() {
-    for (int i = 0; i < activeMissiles.size(); i++) {
+void deleteMissile(int index) {
+    //for (int i = 0; i < activeMissiles.size(); i++) {
     // Delete missile if it has reached the top or if it has collided with an obstacle
-        clearFrame(activeMissiles[i]->getX(), activeMissiles[i]->getY(), activeMissiles[i]->getRows(), activeMissiles[i]->getCols());
-        delete activeMissiles[i];
-        activeMissiles.erase(activeMissiles.begin() + i);
-        i--; // Adjust index after deletion
-    }
+        clearFrame(activeMissiles[index]->getX(), activeMissiles[index]->getY(), activeMissiles[index]->getRows(), activeMissiles[index]->getCols());
+        delete activeMissiles[index];
+        activeMissiles.erase(activeMissiles.begin() + index);
+        //i--; // Adjust index after deletion
+    //}
 }
 
 void controlMissiles() {
-    for (int i = 0; i < activeMissiles.size(); i++) {
-        activeMissiles[i]->moveUpward();  // Move the missile
+    for (int i = 0; i < activeMissiles.size(); ) {
+        Missile* m = activeMissiles[i];
 
-        // Delete missile if it has reached the top or if it has collided with an obstacle
-        if (activeMissiles[i]->getY() == 1 || checkForMissileCollisions(*activeMissiles[i])) {
-            deleteMissile();
+        if (m->getY() == 1 || checkForMissileCollisions(*m)) {
+            deleteMissile(i); // Only delete the missile that triggered this condition
+            continue; // Don't increment i
         }
+
+        m->moveUpward();
+        i++; // Only increment if not deleted
     }
 }
+
 
 void displayHighscore() {
     static int highscore = -1;  // -1 means "not loaded yet"
@@ -436,6 +441,7 @@ void displayHighscore() {
 
 inline void endGame() {
     gameIsRunning = false;
+    cleanUpDynamicMemories();
     setCursorPosition(55, 10);
     cout << "Game Over!";
     setCursorPosition(48, 14);
@@ -492,11 +498,13 @@ void gameLoop() {
 
 void cleanUpDynamicMemories() {
     for (Missile* m : activeMissiles) {
+        clearFrame(m->getX(), m->getY(), m->getRows(), m->getCols());
         delete m;
     }
     activeMissiles.clear();
 
     for (Obstacle* o : activeObstacles) {
+        clearFrame(o->getX(), o->getY(), o->getRows(), o->getCols());
         delete o;
     }
     activeObstacles.clear();
