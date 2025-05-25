@@ -3,19 +3,17 @@
 #include <windows.h>
 #include <random>
 #include <fstream>
+#include <string>
 using namespace std;
 bool gameIsRunning = true; 
 int score = 0;
+static int highscore = -1;  // -1 means "not loaded yet"
 void endGame();
 void deleteMissile(int index);
 void deleteObstacle(int index);
 void gameLoop();
 void cleanUpDynamicMemories();
 inline void setCursorPosition(int x, int y);
-
-// *************************
-// Tamashi ro gacherebulia da axalidan dawyebas ro xels ushlis eg gafiqse
-// *************************
 
 // Function for displaying OR updating the score
 inline void showCurrentScore(int add = 0) {
@@ -111,10 +109,9 @@ void displayFrame(int x, int y, vector<vector<int>> objectToDisplay, int gamespe
             SetConsoleTextAttribute(getConsole(), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
         }
     }
-
-    // Sleep(gamespeed); // Optional for animation delay
 }
 
+// Define an obstacle class
 class Obstacle {
 private:
     vector<vector<int>> obstacleRep = {
@@ -384,13 +381,9 @@ void controlObstacles() {
 }
 
 void deleteMissile(int index) {
-    //for (int i = 0; i < activeMissiles.size(); i++) {
-    // Delete missile if it has reached the top or if it has collided with an obstacle
-        clearFrame(activeMissiles[index]->getX(), activeMissiles[index]->getY(), activeMissiles[index]->getRows(), activeMissiles[index]->getCols());
-        delete activeMissiles[index];
-        activeMissiles.erase(activeMissiles.begin() + index);
-        //i--; // Adjust index after deletion
-    //}
+    clearFrame(activeMissiles[index]->getX(), activeMissiles[index]->getY(), activeMissiles[index]->getRows(), activeMissiles[index]->getCols());
+    delete activeMissiles[index];
+    activeMissiles.erase(activeMissiles.begin() + index);
 }
 
 void controlMissiles() {
@@ -409,8 +402,6 @@ void controlMissiles() {
 
 
 void displayHighscore() {
-    static int highscore = -1;  // -1 means "not loaded yet"
-
     // Load from file on first call only
     if (highscore == -1) {
         ifstream inFile("highscore.txt");
@@ -445,7 +436,7 @@ inline void endGame() {
     setCursorPosition(55, 10);
     cout << "Game Over!";
     setCursorPosition(48, 14);
-    cout << "Press R to restart the game. \n";
+    cout << "Press R to restart the game.\n";
 }
 
 inline void checkForGameOver(Aircraft& a) {
@@ -456,20 +447,25 @@ inline void checkForGameOver(Aircraft& a) {
     }
 }
 
-// ****************
-// aq sheaswore ro ramdeni char icaa xazze imdeni empty space dabechdos (ciklit sheamowme)
-// ****************
+// Function for dynamically clearing game over messages
+inline void clearMessage(int x, int y, const string& message) {
+    setCursorPosition(x, y);
+    cout << string(message.length(), ' '); // Print the string of empty spaces which will match the length of the given message 
+}
+
 void restartTheGame(Aircraft& a) {
     clearFrame(a.getStartX(), a.getStartY(), a.getRows(), a.getCols());
     gameIsRunning = true;
-    setCursorPosition(55, 10);
-    cout << "          ";
-    setCursorPosition(50, 12);
-    cout << "                       ";
-    setCursorPosition(48, 14);
-    cout << "                             ";
-    setCursorPosition(55, 0);
-    cout << "                    ";
+    clearMessage(55, 10, "Game Over!");
+    // Since highscore is dynamic, count it's length based on the size of the number
+    string countedHighscore; 
+    if (score > highscore) countedHighscore = "New highscore! " + to_string(highscore);
+    else { countedHighscore = "Current highscore: " + to_string(highscore); }
+    clearMessage(50, 12, countedHighscore); // Now pass the counted string to the clearing function
+    clearMessage(48, 14, "Press R to restart the game.");
+    // Do the same for score
+    string countedScore = "Score: " + to_string(score);
+    clearMessage(55, 0, countedScore);
     score = 0;
     gameLoop();
 }
@@ -514,5 +510,5 @@ int main()
 {
     hideCursor(); // Hide the cursor
     gameLoop(); // Run the game loop to start the game
-    cleanUpDynamicMemories(); // Cleanup remaining dynamically allocated memories
+    //cleanUpDynamicMemories(); // Cleanup remaining dynamically allocated memories
 }
