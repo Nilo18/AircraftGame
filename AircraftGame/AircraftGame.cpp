@@ -13,17 +13,17 @@ void deleteMissile(int index);
 void deleteObstacle(int index);
 void gameLoop();
 void cleanUpDynamicMemories();
-inline void setCursorPosition(int x, int y);
+void setCursorPosition(int x, int y);
 
 // Function for displaying OR updating the score
-inline void showCurrentScore(int add = 0) {
+void showCurrentScore(int add = 0) {
     if (add != 0) score += add; 
     setCursorPosition(55, 0);
     cout << "Score: " << score << endl;
 }
 
 // Function for hiding the cursor inside the console
-inline void hideCursor() {
+void hideCursor() {
     HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE); // Get handle to the console
     CONSOLE_CURSOR_INFO cursorInfo; // Initialize the class containing cursor info
     GetConsoleCursorInfo(consoleHandle, &cursorInfo);
@@ -48,7 +48,7 @@ int getConsoleRightmostX() {
     return -1; // Return -1 if there's an error
 }
 
-inline int getConsoleBottomMostY() {
+int getConsoleBottomMostY() {
     CONSOLE_SCREEN_BUFFER_INFO screenBufferInfo;
 
     if (GetConsoleScreenBufferInfo(getConsole(), &screenBufferInfo)) {
@@ -59,7 +59,7 @@ inline int getConsoleBottomMostY() {
 }
 
 // Function for setting cursor position inside the console
-inline void setCursorPosition(int x, int y) { 
+void setCursorPosition(int x, int y) { 
     COORD coord;
     coord.X = x;
     coord.Y = y;
@@ -430,7 +430,7 @@ void displayHighscore() {
     }
 }
 
-inline void endGame() {
+void endGame() {
     gameIsRunning = false;
     cleanUpDynamicMemories();
     setCursorPosition(55, 10);
@@ -439,7 +439,7 @@ inline void endGame() {
     cout << "Press R to restart the game.\n";
 }
 
-inline void checkForGameOver(Aircraft& a) {
+void checkForGameOver(Aircraft& a) {
     // End the game if an obstacle has collided with the aircraft
     if (checkForAircraftCollisions(a)) {
         endGame();
@@ -448,7 +448,7 @@ inline void checkForGameOver(Aircraft& a) {
 }
 
 // Function for dynamically clearing game over messages
-inline void clearMessage(int x, int y, const string& message) {
+void clearMessage(int x, int y, const string& message) {
     setCursorPosition(x, y);
     cout << string(message.length(), ' '); // Print the string of empty spaces which will match the length of the given message 
 }
