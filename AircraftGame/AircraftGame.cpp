@@ -354,9 +354,24 @@ void listenForEvents(Aircraft& a) {
     }
 }
 
+int obstacleCount = 1; // Current obstacle count
+int lastScoreChecked = -10; // A flag to mark the last score at which the obstacle count was increased, it is initialized as -10 to ensure first test passes
+
 void makeObstacles() {
-    if (activeObstacles.size() < 3) activeObstacles.push_back(new Obstacle); // Make sure that obstacles are limited in quantity
+    // If score is a multiple of 1000 and obstacle count hasn't been increased at this multiple, then increase it
+    if (score % 1000 == 0 && lastScoreChecked != score) {
+        obstacleCount++; 
+        lastScoreChecked = score; // Mark the last score at which the obstacle count was increased
+    }
+
+    // If there are no active obstacles, create the current amount of them (The quantity is regulated by the if statement above)
+    if (activeObstacles.size() == 0) {
+        for (int i = 0; i < obstacleCount; i++) {
+            activeObstacles.push_back(new Obstacle); 
+        }
+    }
 }
+
 
 void deleteObstacle(int index) {
     clearFrame(activeObstacles[index]->getX(), activeObstacles[index]->getY(), activeObstacles[index]->getRows(), activeObstacles[index]->getCols());
@@ -368,7 +383,7 @@ void controlObstacles() {
     static int frameCount = 0; // Make the frame count static so it doesn't reset on every function call
     frameCount++; // Increase the frame count on every run
 
-   if (frameCount % 5 == 0) {
+   if (frameCount % 15 == 0) {
         for (int i = 0; i < activeObstacles.size(); i++) {
             activeObstacles[i]->moveDown();  // Move the obstacle
 
@@ -399,7 +414,6 @@ void controlMissiles() {
         i++; // Only increment if not deleted
     }
 }
-
 
 void displayHighscore() {
     // Load from file on first call only
@@ -467,7 +481,8 @@ void restartTheGame(Aircraft& a) {
     string countedScore = "Score: " + to_string(score);
     clearMessage(55, 0, countedScore);
     score = 0;
-    gameLoop();
+    obstacleCount = 1;
+    gameLoop(); // Rerun the gameloop to create everything all over
 }
 
 void gameLoop() {
