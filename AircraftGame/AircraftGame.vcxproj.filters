@@ -18,9 +18,24 @@
     <ClCompile Include="AircraftGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="game_motion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game_utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game_objects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game_objects.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game_motion.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game_utils.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
