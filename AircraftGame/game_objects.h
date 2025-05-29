@@ -80,5 +80,4 @@ public:
 extern vector<Obstacle*> activeObstacles; // Vector for counting active obstacles, extern means it's defined elsewhere
 extern vector<Missile*> activeMissiles; // Vector for counting active missiles
 
-
 #endif

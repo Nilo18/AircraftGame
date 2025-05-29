@@ -17,5 +17,5 @@ void makeObstacles();
 void controlObstacles();
 void endGame();
 
-
+extern bool obstacleWasNaturallyDeleted; // A flag to check if the obstacle was deleted naturally (reached the bottom) or was shot down
 #endif

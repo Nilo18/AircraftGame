@@ -83,7 +83,6 @@ void displayHighscore() {
         ifstream inFile("highscore.txt");
         inFile >> highscore;
         if (!inFile) {
-            cout << "Error loading from file.";
             highscore = 0; // If file doesn't exist or is invalid
         }
         inFile.close();
@@ -103,5 +102,38 @@ void displayHighscore() {
     }
     else {
         cout << "Current highscore: " << highscore << endl;
+    }
+}
+
+// Function for generating random numbers
+int generateRandomNumber(int start, int end) {
+    random_device rd;
+    default_random_engine dre(rd());
+    uniform_int_distribution <int> dis(start, end);
+
+    return dis(dre);
+}
+
+void displayCurrentVersion() {
+    setCursorPosition(getConsoleRightmostX() - 17, 0);
+    cout << "AircraftGame v1.1";
+}
+
+void displayAllClear() {
+    // Start displaying "All Clear!" only if there is more than one active obstacle
+    if (obstacleCount > 1) {
+        static int frameCount = 0;
+        frameCount++;
+        // If the game is running, there are no obstacles and the obstacles weren't naturally deleted (i.e were all shot down) print a message "All Clear!"
+        if (gameIsRunning && activeObstacles.empty() && !obstacleWasNaturallyDeleted) {
+            setCursorPosition(0, 0);
+            SetConsoleTextAttribute(getConsole(), 14);
+            cout << "All clear!";
+        }
+        // Delete the message after 250 frames
+        if (frameCount % 200 == 0) {
+            setCursorPosition(0, 0);
+            cout << "          ";
+        }
     }
 }

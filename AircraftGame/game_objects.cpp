@@ -15,11 +15,7 @@ int Obstacle::getCols() const { return cols; }
 int Obstacle::getBottomLimit() const { return bottomLimit; }
 
 Obstacle::Obstacle() {
-    random_device rd;
-    default_random_engine dre(rd());
-    uniform_int_distribution <int> dis(2, getConsoleRightmostX() - 2);
-
-    this->startX = dis(dre);
+    this->startX = generateRandomNumber(2, getConsoleRightmostX() - 2);
     displayFrame(startX, startY, obstacleRep);
 }
 

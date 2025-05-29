@@ -57,6 +57,7 @@ void restartTheGame(Aircraft& a) {
 void gameLoop() {
     Aircraft a; // Create the aircaft
     showCurrentScore(); // Show the current score
+    displayCurrentVersion(); // Show the current version of the game
 
     // The outer loop is for keeping the console running in case the game is over
     while (true) {
@@ -66,6 +67,7 @@ void gameLoop() {
             controlObstacles(); // Control the obstacles while the game is running
             controlMissiles(); // Control the missiles while the game is running
             checkForGameOver(a); // Keep checking if an obstacle hit the aircraft
+            displayAllClear();
             Sleep(10); // Control game speed
         }
 

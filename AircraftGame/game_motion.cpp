@@ -75,25 +75,25 @@ void deleteObstacle(int index) {
     activeObstacles.erase(activeObstacles.begin() + index);
 }
 
-
 int obstacleCount = 1;
 int lastScoreChecked = -10;
 
 void makeObstacles() {
-    // If score is a multiple of 1000 and obstacle count hasn't been increased at this multiple, then increase it
-    if (score % 1000 == 0 && lastScoreChecked != score) {
+    // If the current score is a multiple of 1000, isn't 0 and obstacle count hasn't been increased at this multiple, then increase it
+    if (score != 0 && score % 1000 == 0 && lastScoreChecked != score) {
         obstacleCount++;
         lastScoreChecked = score; // Mark the last score at which the obstacle count was increased
     }
 
-    // If there are no active obstacles, create the current amount of them (The quantity is regulated by the if statement above)
-    if (activeObstacles.size() == 0) {
+    // If there are no active obstacles and the game is running, create the current amount of them (The quantity is regulated by the if statement above)
+    if (activeObstacles.size() == 0 && gameIsRunning) {
         for (int i = 0; i < obstacleCount; i++) {
             activeObstacles.push_back(new Obstacle);
         }
     }
 }
 
+bool obstacleWasNaturallyDeleted = false;
 void controlObstacles() {
     static int frameCount = 0; // Make the frame count static so it doesn't reset on every function call
     frameCount++; // Increase the frame count on every run, frames are counted to control only obstacle's speed
@@ -105,6 +105,10 @@ void controlObstacles() {
             // Delete obstacle if it reaches the bottom
             if (activeObstacles[i]->getY() == activeObstacles[i]->getBottomLimit()) {
                 deleteObstacle(i);
+                obstacleWasNaturallyDeleted = true;
+            }
+            else {
+                obstacleWasNaturallyDeleted = false;
             }
         }
     }

@@ -18,5 +18,8 @@ void showCurrentScore(int add = 0);
 void cleanUpDynamicMemories();
 void clearMessage(int x, int y, const string& message);
 void displayHighscore();
+int generateRandomNumber(int start, int end);
+void displayCurrentVersion();
+void displayAllClear();
 
 #endif
