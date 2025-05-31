@@ -67,7 +67,9 @@ void gameLoop() {
             controlObstacles(); // Control the obstacles while the game is running
             controlMissiles(); // Control the missiles while the game is running
             checkForGameOver(a); // Keep checking if an obstacle hit the aircraft
-            displayAllClear();
+            displayAllClear(); // Display all clear if the player shoots all the obstacles down
+            spawnBoss(); // Spawn boss if the conditions are met (The function check for the conditions)
+            controlBoss(); // Control the boss
             Sleep(10); // Control game speed
         }
 

@@ -57,9 +57,9 @@ public:
 class Aircraft {
 private:
     vector <vector<int>> aircraftRep = {
-        {0, 0, 101, 0, 0},
-        {0, 101, 101, 101, 0},
-        {101, 0, 101, 0, 101},
+        {0,   0,  101,  0,  0},
+        {0,  101, 101, 101, 0},
+        {101, 0,  101,  0, 101},
     };
     int startX = 54; // Starting X coordinate
     int startY = 25; // Starting Y coordinate
@@ -75,6 +75,31 @@ public:
     int getRows() const;
     int getCols() const;
     friend bool checkForAircraftCollisions(const Aircraft& a);
+};
+
+class Boss {
+private:
+    vector <vector<int>> bossRep = {
+        {1011, 0, 1011, 0, 1011},
+        {0, 1011, 101, 1011, 0},
+        {0,  0,   1011,  0,  0}
+    };
+    int startX = 55;
+    int startY = 1;
+    const int rows = 3;
+    const int cols = 5;
+    int hp = 20;
+public:
+    Boss();
+    void shootMissile();
+    void moveLeft();
+    void moveRight();
+    int getStartX() const;
+    int getStartY() const;
+    int getRows() const;
+    int getCols() const;
+    int getHp() const;
+    friend bool checkForBossCollisions(const Boss& boss);
 };
 
 extern vector<Obstacle*> activeObstacles; // Vector for counting active obstacles, extern means it's defined elsewhere

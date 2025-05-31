@@ -75,15 +75,15 @@ void Missile::moveUpward() {
     }
 }
 
-Aircraft::Aircraft() {
-    displayFrame(startX, startY, aircraftRep);
-}
-
 // Functions related to the aircraft
 int Aircraft::getStartX() const { return startX; }
 int Aircraft::getStartY() const { return startY; }
 int Aircraft::getRows() const { return rows; }
 int Aircraft::getCols() const { return cols; }
+
+Aircraft::Aircraft() {
+    displayFrame(startX, startY, aircraftRep);
+}
 
 bool checkForAircraftCollisions(const Aircraft& a) {
     for (int i = 0; i < a.aircraftRep.size(); i++) {
@@ -167,4 +167,31 @@ void Aircraft::moveRight() {
 
 void Aircraft::shootMissile() {
     activeMissiles.push_back(new Missile(startX + 1));
+}
+
+// Functions related to the boss
+int Boss::getStartX() const { return startX; }
+int Boss::getStartY() const { return startY; }
+int Boss::getRows() const { return rows; }
+int Boss::getCols() const { return cols; }
+int Boss::getHp() const { return hp; }
+
+void Boss::moveLeft() {
+    if (startX != 0) {
+        clearFrame(startX, startY, rows, cols);
+        startX--;
+        displayFrame(startX, startY, bossRep);
+    }
+}
+
+void Boss::moveRight() {
+    if (startX < getConsoleRightmostX() - 4) {
+        clearFrame(startX, startY, rows, cols);
+        startX++;
+        displayFrame(startX, startY, bossRep);
+    }
+}
+
+Boss::Boss() {
+    displayFrame(startX, startY, bossRep);
 }

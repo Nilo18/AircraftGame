@@ -39,6 +39,8 @@ void displayFrame(int x, int y, vector<vector<int>> objectToDisplay) {
                 case 11:
                     SetConsoleTextAttribute(getConsole(), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
                     cout << '*'; break;
+                case 1011:
+                    SetConsoleTextAttribute(getConsole(), FOREGROUND_RED | FOREGROUND_GREEN | BACKGROUND_RED | BACKGROUND_GREEN);
                 default: cout << '|'; break;
                 }
             }
@@ -122,3 +124,55 @@ void endGame() {
     setCursorPosition(48, 14);
     cout << "Press R to restart the game.\n";
 }
+
+Boss* boss = nullptr; 
+bool bossWasSpawned = false; // Flag to make sure that the boss is spawned once
+int bossFrameCount = 0; // This will count the frames in which the boss moves/operates
+int direction; // This will be the direction in which the boss will move
+void spawnBoss() {
+    // If the score is 5000, game is running and the boss hasn't spawned, reassign the dynamically allocated memory for the boss from nullptr to Boss object
+    if (score % 5000 == 0 && gameIsRunning && !bossWasSpawned) {
+        boss = new Boss;
+        bossWasSpawned = true; // Mark the flag as true since the boss has already spawned
+        direction = generateRandomNumber(1, 2); // Generate the initial direction randomly, either left (1) or right (2)
+    }
+}
+
+int bossStepCounter = 0; // This will count boss' steps
+int maxSteps = 15; // This is the max amount of steps (distance) boss can walk
+bool isPaused = false; // Flag to control the pause in between boss movements
+int pauseCounter = 0;  // This will count through the duration of the pause 
+int pauseDuration = 100; // This is the duration of the pause in between movement
+void controlBoss() {
+    // Check if the boss has spawned and the memory for it is allocated properly
+    if (bossWasSpawned && boss != nullptr) {
+        bossFrameCount++; // If the boss has spawned, increase the frame count, this will now count the frames it covers
+
+        // Move the boss every 4 frames, make sure that it's steps are in the boundaries
+        if (bossFrameCount % 4 == 0 && bossStepCounter < maxSteps && direction == 1) {
+            boss->moveLeft(); // If the direction is 1, boss shall move to the left
+            bossStepCounter++; // Increase step count as it moves
+        }
+        else if (bossFrameCount % 4 == 0 && bossStepCounter < maxSteps && direction == 2) {
+            boss->moveRight(); // If the direction is 2, boss shall move to the right
+            bossStepCounter++; // Increase step count as it moves
+        }
+        if (bossStepCounter >= maxSteps) {
+            isPaused = true; // If the boss has taken max allowed steps, stop it before changing direction
+        }
+
+        // Check if the boss has been paused (stopped moving)
+        if (isPaused) {
+            pauseCounter++; // If it has start counting through the duration of it's pause
+            // Check if the counter has exceeded the limit
+            if (pauseCounter >= pauseDuration) {
+                direction = generateRandomNumber(1, 2); // If it has, generate a new direction randomly 
+                bossStepCounter = 0; // Reset it's step counter
+                isPaused = false; // Reset the flag so the boss can move again
+                pauseCounter = 0; // Reset the pause counter
+            }
+        }
+    }
+}
+  
+
