@@ -5,6 +5,9 @@
 #include <random>
 #include "game_motion.h"
 #include "game_utils.h"
+class BossMissile;
+class Aircraft;
+bool checkForBossMissileCollisions(const BossMissile& bm, const Aircraft& a);
 
 using namespace std;
 
@@ -24,11 +27,11 @@ public:
     Obstacle();
     ~Obstacle() = default;
     void moveDown();
-    int getX() const;
-    int getY() const;
-    int getRows() const;
-    int getCols() const;
-    int getBottomLimit() const;
+    int getX() const noexcept;
+    int getY() const noexcept;
+    int getRows() const noexcept;
+    int getCols() const noexcept;
+    int getBottomLimit() const noexcept;
 };
 
 // Define a missile
@@ -46,10 +49,10 @@ private:
 public:
     Missile(int startX);
     void moveUpward();
-    int getX() const;
-    int getY() const;
-    int getRows() const;
-    int getCols() const;
+    int getX() const noexcept;
+    int getY() const noexcept;
+    int getRows() const noexcept;
+    int getCols() const noexcept;
     friend bool checkForMissileCollisions(const Missile& m);
 };
 
@@ -70,11 +73,12 @@ public:
     void shootMissile();
     void moveLeft();
     void moveRight();
-    int getStartX() const;
-    int getStartY() const;
-    int getRows() const;
-    int getCols() const;
+    int getStartX() const noexcept;
+    int getStartY() const noexcept;
+    int getRows() const noexcept;
+    int getCols() const noexcept;
     friend bool checkForAircraftCollisions(const Aircraft& a);
+    friend bool checkForBossMissileCollisions(const BossMissile& bm, const Aircraft& a);
 };
 
 class Boss {
@@ -94,15 +98,41 @@ public:
     void shootMissile();
     void moveLeft();
     void moveRight();
-    int getStartX() const;
-    int getStartY() const;
-    int getRows() const;
-    int getCols() const;
-    int getHp() const;
+    int getStartX() const noexcept;
+    int getStartY() const noexcept;
+    int getRows() const noexcept;
+    int getCols() const noexcept;
+    int getHp() const noexcept;
     friend bool checkForBossCollisions(const Boss& boss);
+};
+
+class BossMissile {
+private:
+    vector<vector<int>> bossMissileRep = {
+        {0,   1011,   0},
+        {1011, 101, 1011},
+        {0,    1011,  0}
+    };
+    int startX;
+    int startY;
+    const int rows = 3;
+    const int cols = 3;
+    int bottomLimit = 25;
+public:
+    BossMissile(int startX, int startY = 5);
+    void moveDown();
+    void moveOnLeftDiagonal();
+    void moveOnRightDiagonal();
+    friend bool checkForBossMissileCollisions(const BossMissile& bm, const Aircraft& a);
+    int getStartX() const noexcept;
+    int getStartY() const noexcept;
+    int getRows() const noexcept;
+    int getCols() const noexcept;
+    int getBottomLimit() const noexcept;
 };
 
 extern vector<Obstacle*> activeObstacles; // Vector for counting active obstacles, extern means it's defined elsewhere
 extern vector<Missile*> activeMissiles; // Vector for counting active missiles
+extern vector<BossMissile*> activeBossMissiles; // Vector for counting missiles shot by the boss
 
 #endif

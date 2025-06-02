@@ -21,5 +21,6 @@ void displayHighscore();
 int generateRandomNumber(int start, int end);
 void displayCurrentVersion();
 void displayAllClear();
+void disableConsoleResize();
 
 #endif

@@ -34,8 +34,15 @@ void checkForGameOver(Aircraft& a) {
         endGame();
         displayHighscore();
     }
-}
+    for (const auto& missile : activeBossMissiles) {
+        if (checkForBossMissileCollisions(*missile, a)) {
+            endGame();
+            displayHighscore();
+        }
+    }
 
+}
+    
 void restartTheGame(Aircraft& a) {
     clearFrame(a.getStartX(), a.getStartY(), a.getRows(), a.getCols());
     gameIsRunning = true;
@@ -63,13 +70,13 @@ void gameLoop() {
     while (true) {
         while (gameIsRunning) {
             listenForEvents(a); // Listen for user interactions with the aircraft
+            spawnBoss(); // Spawn boss if the conditions are met (The function checks for the conditions)
+            controlBoss(); // Control the boss
             makeObstacles(); // Keep creating obstacles while the game is running
             controlObstacles(); // Control the obstacles while the game is running
             controlMissiles(); // Control the missiles while the game is running
             checkForGameOver(a); // Keep checking if an obstacle hit the aircraft
             displayAllClear(); // Display all clear if the player shoots all the obstacles down
-            spawnBoss(); // Spawn boss if the conditions are met (The function check for the conditions)
-            controlBoss(); // Control the boss
             Sleep(10); // Control game speed
         }
 
@@ -83,5 +90,6 @@ void gameLoop() {
 int main()
 {
     hideCursor(); // Hide the cursor
+    disableConsoleResize();
     gameLoop(); // Run the game loop to start the game
 }

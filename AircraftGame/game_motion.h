@@ -18,6 +18,8 @@ void controlObstacles();
 void endGame();
 void spawnBoss();
 void controlBoss(); 
+void controlBossMissiles();
+void deleteBossMissile(int index);
 
 extern bool obstacleWasNaturallyDeleted; // A flag to check if the obstacle was deleted naturally (reached the bottom) or was shot down
 extern bool bossWasSpawned;
@@ -28,4 +30,5 @@ extern int maxSteps;
 extern bool isPaused;
 extern int pauseCounter;
 extern int pauseDuration;
+extern bool bossShotAMissile;
 #endif

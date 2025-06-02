@@ -137,3 +137,12 @@ void displayAllClear() {
         }
     }
 }
+
+void disableConsoleResize() {
+    HWND consoleWindow = GetConsoleWindow(); // Get console window handle
+
+    // Remove the resize and maximize options from the window
+    LONG style = GetWindowLong(consoleWindow, GWL_STYLE);
+    style &= ~(WS_MAXIMIZEBOX | WS_SIZEBOX);
+    SetWindowLong(consoleWindow, GWL_STYLE, style);
+}

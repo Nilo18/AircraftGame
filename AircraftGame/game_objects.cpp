@@ -1,18 +1,20 @@
 #include <vector>
 #include <random>
+#include <iostream>
 #include "game_objects.h"
 //#include "game_utils.h"  
-//#include "game_motion.h"
+#include "game_motion.h"
 using namespace std;
 vector<Missile*> activeMissiles;
 vector<Obstacle*> activeObstacles;
+vector<BossMissile*> activeBossMissiles;
 
 // Functions related to the Obstacle
-int Obstacle::getX() const { return startX; }
-int Obstacle::getY() const { return startY; }
-int Obstacle::getRows() const { return rows; }
-int Obstacle::getCols() const { return cols; }
-int Obstacle::getBottomLimit() const { return bottomLimit; }
+int Obstacle::getX() const noexcept { return startX; }
+int Obstacle::getY() const noexcept { return startY; }
+int Obstacle::getRows() const noexcept { return rows; }
+int Obstacle::getCols() const noexcept { return cols; }
+int Obstacle::getBottomLimit() const noexcept { return bottomLimit; }
 
 Obstacle::Obstacle() {
     this->startX = generateRandomNumber(2, getConsoleRightmostX() - 2);
@@ -20,16 +22,16 @@ Obstacle::Obstacle() {
 }
 
 void Obstacle::moveDown() {
-    clearFrame(startX, startY, rows, cols); // Pass the size of the obstacle as well as the coordinates DONE!
+    clearFrame(startX, startY, rows, cols); // Pass the size of the obstacle as well as the coordinates 
     if (startY < bottomLimit) startY++;
     displayFrame(startX, startY, obstacleRep);
 }
 
 // Functions related to the Missile
-int Missile::getX() const { return startX; }
-int Missile::getY() const { return startY; }
-int Missile::getRows() const { return rows; }
-int Missile::getCols() const { return cols; }
+int Missile::getX() const noexcept { return startX; }
+int Missile::getY() const noexcept { return startY; }
+int Missile::getRows() const noexcept { return rows; }
+int Missile::getCols() const noexcept { return cols; }
 
 Missile::Missile(int startX) {
     this->startX = startX;
@@ -76,10 +78,10 @@ void Missile::moveUpward() {
 }
 
 // Functions related to the aircraft
-int Aircraft::getStartX() const { return startX; }
-int Aircraft::getStartY() const { return startY; }
-int Aircraft::getRows() const { return rows; }
-int Aircraft::getCols() const { return cols; }
+int Aircraft::getStartX() const noexcept { return startX; }
+int Aircraft::getStartY() const noexcept { return startY; }
+int Aircraft::getRows() const noexcept { return rows; }
+int Aircraft::getCols() const noexcept { return cols; }
 
 Aircraft::Aircraft() {
     displayFrame(startX, startY, aircraftRep);
@@ -170,11 +172,11 @@ void Aircraft::shootMissile() {
 }
 
 // Functions related to the boss
-int Boss::getStartX() const { return startX; }
-int Boss::getStartY() const { return startY; }
-int Boss::getRows() const { return rows; }
-int Boss::getCols() const { return cols; }
-int Boss::getHp() const { return hp; }
+int Boss::getStartX() const noexcept { return startX; }
+int Boss::getStartY() const noexcept { return startY; }
+int Boss::getRows() const noexcept { return rows; }
+int Boss::getCols() const noexcept { return cols; }
+int Boss::getHp() const noexcept { return hp; }
 
 void Boss::moveLeft() {
     if (startX != 0) {
@@ -185,7 +187,7 @@ void Boss::moveLeft() {
 }
 
 void Boss::moveRight() {
-    if (startX < getConsoleRightmostX() - 4) {
+    if (startX != getConsoleRightmostX() - 4) {
         clearFrame(startX, startY, rows, cols);
         startX++;
         displayFrame(startX, startY, bossRep);
@@ -194,4 +196,63 @@ void Boss::moveRight() {
 
 Boss::Boss() {
     displayFrame(startX, startY, bossRep);
+}
+
+void Boss::shootMissile() {
+    //for (int i = 0; i < 2; i++) {
+    //    activeBossMissiles.push_back(new BossMissile);
+    //}
+    //setCursorPosition(20, 0);
+    //cout << "Shooting a missile";
+    activeBossMissiles.push_back(new BossMissile(startX + 1));
+}
+
+// Functions related to boss' missiles
+
+int BossMissile::getStartX() const noexcept { return startX; }
+int BossMissile::getStartY() const noexcept { return startY; }
+int BossMissile::getRows() const noexcept { return rows; }
+int BossMissile::getCols() const noexcept { return cols; }
+int BossMissile::getBottomLimit() const noexcept { return bottomLimit; }
+
+// Refer back here if there are any collision problems
+bool checkForBossMissileCollisions(const BossMissile& bm, const Aircraft& a) {
+    int missileX = bm.startX;
+    int missileY = bm.startY;
+    int aircraftX = a.getStartX();
+    int aircraftY = a.getStartY();
+    for (int i = 0; i < bm.bossMissileRep.size(); i++) {
+        for (int j = 0; j < bm.bossMissileRep[i].size(); j++) {
+            if (bm.bossMissileRep[i][j] == 0) continue;
+
+            int globalMissileX = missileX + j;
+            int globalMissileY = missileY + i;
+
+            for (int i = 0; i < a.getRows(); i++) {
+                for (int j = 0; j < a.getCols(); j++) {
+                    if (a.aircraftRep[i][j] == 0) continue;
+
+                    int aircraftGlobalX = aircraftX + j;
+                    int aircraftGlobalY = aircraftY + i;
+
+                    if (globalMissileX == aircraftGlobalX && globalMissileY == aircraftGlobalY) return true;
+                }
+            }
+            
+        }
+    }
+    return false;
+}
+
+BossMissile::BossMissile(int startX, int startY) {
+    this->startX = startX;
+    this->startY = startY;
+    displayFrame(startX, startY, bossMissileRep);
+
+}
+
+void BossMissile::moveDown() {
+    clearFrame(startX, startY, rows, cols);
+    if (startY < bottomLimit) startY++;
+    displayFrame(startX, startY, bossMissileRep);
 }
