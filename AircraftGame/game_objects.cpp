@@ -176,7 +176,8 @@ int Boss::getStartX() const noexcept { return startX; }
 int Boss::getStartY() const noexcept { return startY; }
 int Boss::getRows() const noexcept { return rows; }
 int Boss::getCols() const noexcept { return cols; }
-int Boss::getHp() const noexcept { return hp; }
+unsigned int Boss::getHp() const noexcept { return hp; }
+void Boss::setHp(int newHp) { this->hp = newHp; }
 
 void Boss::moveLeft() {
     if (startX != 0) {
@@ -207,6 +208,41 @@ void Boss::shootMissile() {
     activeBossMissiles.push_back(new BossMissile(startX + 1));
 }
 
+bool checkForBossCollisions(const Boss& boss) {
+    int bossStartX = boss.startX;
+    int bossStartY = boss.startY;
+    for (int bi = 0; bi < boss.bossRep.size(); bi++) {
+        for (int bj = 0; bj < boss.bossRep[bi].size(); bj++) {
+            if (boss.bossRep[bi][bj] == 0) continue;
+
+            int bossPositionX = bossStartX + bj;
+            int bossPositionY = bossStartY + bi;
+
+            for (int i = 0; i < activeMissiles.size(); i++) {
+                int missileX = activeMissiles[i]->getX();
+                int missileY = activeMissiles[i]->getY();
+
+                for (int mi = 0; mi < activeMissiles[i]->getRows(); mi++) {
+                    for (int mj = 0; mj < activeMissiles[i]->getCols(); mj++) {
+                        int missilePositionX = missileX + mi;
+                        int missilePositionY = missileY + mj;
+                        int margin = 1;
+                        if (i == 0) margin = 0; // Top row: tight margin
+                        else if (i == 1) margin = 1;
+                        else if (i == 2) margin = 2; // Bottom row: wider margin
+
+                        if (abs(missilePositionX - bossPositionX) <= margin && missilePositionY == bossPositionY + 1) {
+                            deleteMissile(i); // Delete the player missile if it is colliding with the boss
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
 // Functions related to boss' missiles
 
 int BossMissile::getStartX() const noexcept { return startX; }
@@ -221,21 +257,25 @@ bool checkForBossMissileCollisions(const BossMissile& bm, const Aircraft& a) {
     int missileY = bm.startY;
     int aircraftX = a.getStartX();
     int aircraftY = a.getStartY();
-    for (int i = 0; i < bm.bossMissileRep.size(); i++) {
-        for (int j = 0; j < bm.bossMissileRep[i].size(); j++) {
-            if (bm.bossMissileRep[i][j] == 0) continue;
+    for (int ai = 0; ai < a.aircraftRep.size(); ai++) {
+        for (int aj = 0; aj < a.aircraftRep[ai].size(); aj++) {
+            if (a.aircraftRep[ai][aj] == 0) continue;
 
-            int globalMissileX = missileX + j;
-            int globalMissileY = missileY + i;
+            int aircraftGlobalX = aircraftX + aj;
+            int aircraftGlobalY = aircraftY + ai;
 
-            for (int i = 0; i < a.getRows(); i++) {
-                for (int j = 0; j < a.getCols(); j++) {
-                    if (a.aircraftRep[i][j] == 0) continue;
+            for (int mi = 0; mi < bm.rows; mi++) {
+                for (int mj = 0; mj < bm.cols; mj++) {
+                    if (bm.bossMissileRep[mi][mj] == 0 && !(mi == 2 && (mj == 0 || mj == 2))) continue;
 
-                    int aircraftGlobalX = aircraftX + j;
-                    int aircraftGlobalY = aircraftY + i;
+                    int globalMissileX = missileX + mj;
+                    int globalMissileY = missileY + mi;
 
-                    if (globalMissileX == aircraftGlobalX && globalMissileY == aircraftGlobalY) return true;
+                    if (globalMissileX == aircraftGlobalX && globalMissileY == aircraftGlobalY - 1) {
+                        //setCursorPosition(0, 0);
+                        //cout << "Collision at (" << globalMissileX << ", " << globalMissileY << ")\n";
+                        return true;
+                    }
                 }
             }
             

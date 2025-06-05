@@ -126,13 +126,15 @@ void endGame() {
 }
 
 Boss* boss = nullptr; 
+int bossHp;
 bool bossWasSpawned = false; // Flag to make sure that the boss is spawned once
 int bossFrameCount = 0; // This will count the frames in which the boss moves/operates
 int direction; // This will be the direction in which the boss will move
 void spawnBoss() {
     // If the score is a multiple of 5000, game is running and the boss hasn't spawned, reassign the dynamically allocated memory for the boss from nullptr to Boss object
-    if (score != 0 && score % 5000 == 0 && gameIsRunning && !bossWasSpawned) {
+    if (score % 5000 == 0 && gameIsRunning && !bossWasSpawned) {
         boss = new Boss;
+        bossHp = boss->getHp();
         bossWasSpawned = true; // Mark the flag as true since the boss has already spawned
         direction = generateRandomNumber(1, 2); // Generate the initial direction randomly, either left (1) or right (2)
     }
@@ -179,6 +181,11 @@ void controlBoss() {
                 bossShotAMissile = false;
                 pauseCounter = 0; // Reset the pause counter
             }
+        }
+
+        if (checkForBossCollisions(*boss)) {
+            bossHp--;
+            boss->setHp(bossHp);
         }
     }
 }
