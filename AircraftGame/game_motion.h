@@ -1,8 +1,8 @@
 #pragma once
 #ifndef GAME_MOTION_H
 #define GAME_MOTION_H
-#include <vector>
 #include "game_objects.h" // Include this to access activeMissiles vector
+#include <vector>
 using namespace std;
 
 extern bool gameIsRunning;

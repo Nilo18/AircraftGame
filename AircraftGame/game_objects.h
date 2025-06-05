@@ -92,7 +92,7 @@ private:
     int startY = 1;
     const int rows = 3;
     const int cols = 5;
-    unsigned int hp = 25;
+    int hp = 25;
 public:
     Boss();
     void shootMissile();
@@ -102,8 +102,9 @@ public:
     int getStartY() const noexcept;
     int getRows() const noexcept;
     int getCols() const noexcept;
-    unsigned int getHp() const noexcept;
+    int getHp() const noexcept;
     void setHp(int newHp);
+    void takeDamage(int damage);
     friend bool checkForBossCollisions(const Boss& boss);
 };
 

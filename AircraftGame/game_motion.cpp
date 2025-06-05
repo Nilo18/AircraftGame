@@ -116,8 +116,22 @@ void controlObstacles() {
     }
 }
 
+Boss* boss = nullptr;
+
 void endGame() {
     gameIsRunning = false;
+    if (boss != nullptr) {
+        clearFrame(boss->getStartX(), boss->getStartY(), boss->getRows(), boss->getCols());
+        delete boss;
+        boss = nullptr;
+    }
+    for (BossMissile* bm : activeBossMissiles) {
+        if (bm != nullptr) {
+            clearFrame(bm->getStartX(), bm->getStartY(), bm->getRows(), bm->getCols());
+            delete bm;
+        }
+    }
+    activeBossMissiles.clear();
     cleanUpDynamicMemories();
     setCursorPosition(55, 10);
     cout << "Game Over!";
@@ -125,17 +139,19 @@ void endGame() {
     cout << "Press R to restart the game.\n";
 }
 
-Boss* boss = nullptr; 
-int bossHp;
 bool bossWasSpawned = false; // Flag to make sure that the boss is spawned once
+int lastBossSpawnScore = -1200; // initialize to something that's NOT 0
+bool bossHasDied = false;
 int bossFrameCount = 0; // This will count the frames in which the boss moves/operates
 int direction; // This will be the direction in which the boss will move
 void spawnBoss() {
     // If the score is a multiple of 5000, game is running and the boss hasn't spawned, reassign the dynamically allocated memory for the boss from nullptr to Boss object
-    if (score % 5000 == 0 && gameIsRunning && !bossWasSpawned) {
+    if (score != 0 && score % 500 == 0 && score != lastBossSpawnScore && gameIsRunning && !bossWasSpawned) {
         boss = new Boss;
-        bossHp = boss->getHp();
+        setCursorPosition(15, 0);
+        cout << "Boss HP: " << boss->getHp() << "/25";
         bossWasSpawned = true; // Mark the flag as true since the boss has already spawned
+        lastBossSpawnScore = score; // record the spawn score
         direction = generateRandomNumber(1, 2); // Generate the initial direction randomly, either left (1) or right (2)
     }
 }
@@ -184,8 +200,25 @@ void controlBoss() {
         }
 
         if (checkForBossCollisions(*boss)) {
-            bossHp--;
-            boss->setHp(bossHp);
+            //setCursorPosition(20, 0);
+            //cout << "Boss got hit!";
+            boss->takeDamage(5);
+            if (boss->getHp() == 0) {
+                clearFrame(boss->getStartX(), boss->getStartY(), boss->getRows(), boss->getCols());
+                bossWasSpawned = false;
+                //bossHasDied = true;
+                delete boss;
+                boss = nullptr; 
+                for (BossMissile* bm : activeBossMissiles) {
+                    clearFrame(bm->getStartX(), bm->getStartY(), bm->getRows(), bm->getCols());
+                    delete bm;
+                    bm = nullptr;
+                }
+                activeBossMissiles.clear(); 
+            }
+            //else {
+            //    bossHasDied = false;
+            //}
         }
     }
 }

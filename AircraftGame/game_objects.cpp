@@ -1,6 +1,7 @@
 #include <vector>
 #include <random>
 #include <iostream>
+#include <string>
 #include "game_objects.h"
 //#include "game_utils.h"  
 #include "game_motion.h"
@@ -176,8 +177,19 @@ int Boss::getStartX() const noexcept { return startX; }
 int Boss::getStartY() const noexcept { return startY; }
 int Boss::getRows() const noexcept { return rows; }
 int Boss::getCols() const noexcept { return cols; }
-unsigned int Boss::getHp() const noexcept { return hp; }
+int Boss::getHp() const noexcept { return hp; }
 void Boss::setHp(int newHp) { this->hp = newHp; }
+
+void Boss::takeDamage(int damage) {
+    hp -= damage;
+    if (hp < 0) hp = 0;
+
+    string msg = string("Boss HP: ") + (hp < 10 ? " " : "") + to_string(hp) + "/25";
+    // Always ensure it's the same length (or pad it)
+    msg += "  "; // extra padding if necessary
+    setCursorPosition(15, 0);
+    cout << msg;
+}
 
 void Boss::moveLeft() {
     if (startX != 0) {
