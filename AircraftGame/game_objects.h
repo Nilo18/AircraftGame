@@ -92,7 +92,7 @@ private:
     int startY = 1;
     const int rows = 3;
     const int cols = 5;
-    int hp = 25;
+    int hp = 0; // Set the boss initial HP as 0 so we can scale it depending on how many times it has spawned
 public:
     Boss();
     void shootMissile();

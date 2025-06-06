@@ -31,4 +31,5 @@ extern bool isPaused;
 extern int pauseCounter;
 extern int pauseDuration;
 extern bool bossShotAMissile;
+extern int bossSpawnCounter;
 #endif

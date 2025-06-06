@@ -125,8 +125,8 @@ void displayAllClear() {
     if (obstacleCount > 1) {
         static int frameCount = 0;
         frameCount++;
-        // If the game is running, there are no obstacles and the obstacles weren't naturally deleted (i.e were all shot down) print a message "All Clear!"
-        if (gameIsRunning && activeObstacles.empty() && !obstacleWasNaturallyDeleted) {
+        // If the game is running the boss has not spawned, there are no obstacles and the obstacles weren't naturally deleted (i.e were all shot down) print a message "All Clear!"
+        if (gameIsRunning && activeObstacles.empty() && !obstacleWasNaturallyDeleted && !bossWasSpawned) {
             setCursorPosition(0, 0);
             SetConsoleTextAttribute(getConsole(), 14);
             cout << "All clear!";

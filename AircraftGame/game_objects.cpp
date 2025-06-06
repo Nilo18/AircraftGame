@@ -178,13 +178,13 @@ int Boss::getStartY() const noexcept { return startY; }
 int Boss::getRows() const noexcept { return rows; }
 int Boss::getCols() const noexcept { return cols; }
 int Boss::getHp() const noexcept { return hp; }
-void Boss::setHp(int newHp) { this->hp = newHp; }
+void Boss::setHp(int newHp) { this->hp += newHp; }
 
 void Boss::takeDamage(int damage) {
     hp -= damage;
     if (hp < 0) hp = 0;
 
-    string msg = string("Boss HP: ") + (hp < 10 ? " " : "") + to_string(hp) + "/25";
+    string msg = string("Boss HP: ") + (hp < 10 ? " " : "") + to_string(hp) + "/" + to_string(25 * bossSpawnCounter);
     // Always ensure it's the same length (or pad it)
     msg += "  "; // extra padding if necessary
     setCursorPosition(15, 0);

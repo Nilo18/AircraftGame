@@ -82,7 +82,7 @@ int lastScoreChecked = -10;
 
 void makeObstacles() {
     // If the current score is a multiple of 1000, isn't 0 and obstacle count hasn't been increased at this multiple, then increase it
-    if (score != 0 && score % 1000 == 0 && lastScoreChecked != score) {
+    if (score != 0 && score % 1000 == 0 && lastScoreChecked != score && obstacleCount < 10) {
         obstacleCount++;
         lastScoreChecked = score; // Mark the last score at which the obstacle count was increased
     }
@@ -117,9 +117,12 @@ void controlObstacles() {
 }
 
 Boss* boss = nullptr;
+int bossSpawnCounter = 0;
 
 void endGame() {
     gameIsRunning = false;
+    string msg = string("Boss HP: ") + (boss->getHp() < 10 ? " " : "") + to_string(boss->getHp()) + "/" + to_string(25 * bossSpawnCounter);
+    clearMessage(15, 0, msg);
     if (boss != nullptr) {
         clearFrame(boss->getStartX(), boss->getStartY(), boss->getRows(), boss->getCols());
         delete boss;
@@ -131,6 +134,7 @@ void endGame() {
             delete bm;
         }
     }
+    clearMessage(0, 0, "All clear!");
     activeBossMissiles.clear();
     cleanUpDynamicMemories();
     setCursorPosition(55, 10);
@@ -146,10 +150,12 @@ int bossFrameCount = 0; // This will count the frames in which the boss moves/op
 int direction; // This will be the direction in which the boss will move
 void spawnBoss() {
     // If the score is a multiple of 5000, game is running and the boss hasn't spawned, reassign the dynamically allocated memory for the boss from nullptr to Boss object
-    if (score != 0 && score % 500 == 0 && score != lastBossSpawnScore && gameIsRunning && !bossWasSpawned) {
+    if (score != 0 && score % 5000 == 0 && score != lastBossSpawnScore && gameIsRunning && !bossWasSpawned) {
         boss = new Boss;
+        bossSpawnCounter++;
+        boss->setHp(25 * bossSpawnCounter); // Scale the boss hp depending on the times it has spawned
         setCursorPosition(15, 0);
-        cout << "Boss HP: " << boss->getHp() << "/25";
+        cout << "Boss HP: " << boss->getHp() << '/' << (25 * bossSpawnCounter);
         bossWasSpawned = true; // Mark the flag as true since the boss has already spawned
         lastBossSpawnScore = score; // record the spawn score
         direction = generateRandomNumber(1, 2); // Generate the initial direction randomly, either left (1) or right (2)
@@ -204,6 +210,9 @@ void controlBoss() {
             //cout << "Boss got hit!";
             boss->takeDamage(5);
             if (boss->getHp() == 0) {
+                //string msg = string("Boss HP: ") + to_string(boss->getHp()) + "/25";
+                string msg = string("Boss HP: ") + (boss->getHp() < 10 ? " " : "") + to_string(boss->getHp()) + "/" + to_string(25 * bossSpawnCounter);
+                clearMessage(15, 0, msg);
                 clearFrame(boss->getStartX(), boss->getStartY(), boss->getRows(), boss->getCols());
                 bossWasSpawned = false;
                 //bossHasDied = true;
@@ -216,9 +225,6 @@ void controlBoss() {
                 }
                 activeBossMissiles.clear(); 
             }
-            //else {
-            //    bossHasDied = false;
-            //}
         }
     }
 }
