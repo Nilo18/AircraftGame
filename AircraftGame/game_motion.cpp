@@ -121,9 +121,9 @@ int bossSpawnCounter = 0;
 
 void endGame() {
     gameIsRunning = false;
-    string msg = string("Boss HP: ") + (boss->getHp() < 10 ? " " : "") + to_string(boss->getHp()) + "/" + to_string(25 * bossSpawnCounter);
-    clearMessage(15, 0, msg);
     if (boss != nullptr) {
+        string msg = string("Boss HP: ") + (boss->getHp() < 10 ? " " : "") + to_string(boss->getHp()) + "/" + to_string(25 * bossSpawnCounter);
+        clearMessage(15, 0, msg);
         clearFrame(boss->getStartX(), boss->getStartY(), boss->getRows(), boss->getCols());
         delete boss;
         boss = nullptr;
