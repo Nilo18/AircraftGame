@@ -62,6 +62,7 @@ void restartTheGame(Aircraft& a) {
     bossFrameCount = 0;
     bossStepCounter = 0;
     pauseCounter = 0;
+    lastScoreChecked = -10;
     //direction = generateRandomNumber(1, 2);
     bossShotAMissile = false;
     gameLoop(); // Rerun the gameloop to create everything all over

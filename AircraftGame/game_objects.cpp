@@ -212,11 +212,6 @@ Boss::Boss() {
 }
 
 void Boss::shootMissile() {
-    //for (int i = 0; i < 2; i++) {
-    //    activeBossMissiles.push_back(new BossMissile);
-    //}
-    //setCursorPosition(20, 0);
-    //cout << "Shooting a missile";
     activeBossMissiles.push_back(new BossMissile(startX + 1));
 }
 

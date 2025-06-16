@@ -206,8 +206,6 @@ void controlBoss() {
         }
 
         if (checkForBossCollisions(*boss)) {
-            //setCursorPosition(20, 0);
-            //cout << "Boss got hit!";
             boss->takeDamage(5);
             if (boss->getHp() == 0) {
                 //string msg = string("Boss HP: ") + to_string(boss->getHp()) + "/25";
@@ -236,8 +234,6 @@ void deleteBossMissile(int index) {
 }
 
 void controlBossMissiles() {
-    //setCursorPosition(20, 0);
-    //cout << "Controlling boss missiles...";
     for (int i = 0; i < activeBossMissiles.size(); i++) {
         activeBossMissiles[i]->moveDown();
 
