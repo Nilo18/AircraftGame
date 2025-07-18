@@ -3,7 +3,6 @@
 #include <iostream>
 #include <string>
 #include "game_objects.h"
-//#include "game_utils.h"  
 #include "game_motion.h"
 using namespace std;
 vector<Missile*> activeMissiles;
@@ -16,6 +15,8 @@ int Obstacle::getY() const noexcept { return startY; }
 int Obstacle::getRows() const noexcept { return rows; }
 int Obstacle::getCols() const noexcept { return cols; }
 int Obstacle::getBottomLimit() const noexcept { return bottomLimit; }
+bool Obstacle::getDeleteInfo() const { return isDeleted; }
+void Obstacle::setDeleteInfo(bool value) { isDeleted = value; }
 
 Obstacle::Obstacle() {
     this->startX = generateRandomNumber(2, getConsoleRightmostX() - 2);
@@ -279,8 +280,6 @@ bool checkForBossMissileCollisions(const BossMissile& bm, const Aircraft& a) {
                     int globalMissileY = missileY + mi;
 
                     if (globalMissileX == aircraftGlobalX && globalMissileY == aircraftGlobalY - 1) {
-                        //setCursorPosition(0, 0);
-                        //cout << "Collision at (" << globalMissileX << ", " << globalMissileY << ")\n";
                         return true;
                     }
                 }

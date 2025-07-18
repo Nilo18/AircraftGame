@@ -117,7 +117,7 @@ int generateRandomNumber(int start, int end) {
 
 void displayCurrentVersion() {
     setCursorPosition(getConsoleRightmostX() - 17, 0);
-    cout << "AircraftGame v1.2";
+    cout << "AircraftGame v1.3";
 }
 
 void displayAllClear() {

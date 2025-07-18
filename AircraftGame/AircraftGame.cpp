@@ -2,6 +2,7 @@
 #include "game_utils.h"
 #include "game_motion.h"
 #include "game_objects.h"
+//#include "game_motion.cpp"
 using namespace std;
 void gameLoop();
 
@@ -63,7 +64,8 @@ void restartTheGame(Aircraft& a) {
     bossStepCounter = 0;
     pauseCounter = 0;
     lastScoreChecked = -10;
-    //direction = generateRandomNumber(1, 2);
+    lastBossSpawnScore = -1200;
+    bossSpawnCounter = 0;
     bossShotAMissile = false;
     gameLoop(); // Rerun the gameloop to create everything all over
 }

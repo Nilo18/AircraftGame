@@ -27,9 +27,11 @@ extern int bossFrameCount;
 extern int direction;
 extern int bossStepCounter;
 extern int maxSteps;
+extern int lastBossSpawnScore;
 extern bool isPaused;
 extern int pauseCounter;
 extern int pauseDuration;
 extern bool bossShotAMissile;
 extern int bossSpawnCounter;
+extern bool allObstaclesWereDeleted;
 #endif

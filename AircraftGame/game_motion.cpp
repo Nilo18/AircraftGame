@@ -91,6 +91,8 @@ void makeObstacles() {
     if (activeObstacles.size() == 0 && gameIsRunning && !bossWasSpawned) {
         for (int i = 0; i < obstacleCount; i++) {
             activeObstacles.push_back(new Obstacle);
+            setCursorPosition(75, 0);
+            cout << "                      ";
         }
     }
 }
@@ -170,7 +172,6 @@ int pauseDuration = 20; // This is the duration of the pause in between movement
 bool bossShotAMissile = false;
 void controlBoss() {
     // Check if the boss has spawned and the memory for it is allocated properly
-    //int playerX = a.getStartX();
     if (bossWasSpawned && boss != nullptr) {
         bossFrameCount++; // If the boss has spawned, increase the frame count, this will now count the frames it covers
 
@@ -208,12 +209,10 @@ void controlBoss() {
         if (checkForBossCollisions(*boss)) {
             boss->takeDamage(5);
             if (boss->getHp() == 0) {
-                //string msg = string("Boss HP: ") + to_string(boss->getHp()) + "/25";
                 string msg = string("Boss HP: ") + (boss->getHp() < 10 ? " " : "") + to_string(boss->getHp()) + "/" + to_string(25 * bossSpawnCounter);
                 clearMessage(15, 0, msg);
                 clearFrame(boss->getStartX(), boss->getStartY(), boss->getRows(), boss->getCols());
                 bossWasSpawned = false;
-                //bossHasDied = true;
                 delete boss;
                 boss = nullptr; 
                 for (BossMissile* bm : activeBossMissiles) {

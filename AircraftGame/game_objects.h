@@ -23,6 +23,7 @@ private:
     int bottomLimit = 25;
     const int rows = 2;
     const int cols = 2;
+    bool isDeleted = false;
 public:
     Obstacle();
     ~Obstacle() = default;
@@ -32,6 +33,8 @@ public:
     int getRows() const noexcept;
     int getCols() const noexcept;
     int getBottomLimit() const noexcept;
+    bool getDeleteInfo() const;
+    void setDeleteInfo(bool value);
 };
 
 // Define a missile
@@ -123,8 +126,6 @@ private:
 public:
     BossMissile(int startX, int startY = 5);
     void moveDown();
-    void moveOnLeftDiagonal();
-    void moveOnRightDiagonal();
     friend bool checkForBossMissileCollisions(const BossMissile& bm, const Aircraft& a);
     int getStartX() const noexcept;
     int getStartY() const noexcept;
